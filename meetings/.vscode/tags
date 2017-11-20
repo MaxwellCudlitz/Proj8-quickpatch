@@ -1,0 +1,68 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+APPLICATION_NAME	../flask_main.py	/^APPLICATION_NAME = 'MeetMe class project'$/;"	kind:variable	line:39
+CLIENT_SECRET_FILE	../flask_main.py	/^CLIENT_SECRET_FILE = CONFIG.GOOGLE_KEY_FILE  ## You'll need this$/;"	kind:variable	line:38
+CONFIG	../flask_main.py	/^    CONFIG = config.configuration()$/;"	kind:variable	line:28
+CONFIG	../flask_main.py	/^    CONFIG = config.configuration(proxied=True)$/;"	kind:variable	line:30
+For	../flask_main.py	/^from dateutil import tz  # For interpreting local times$/;"	kind:namespace	line:13
+HERE	../config.py	/^HERE = os.path.dirname(__file__)$/;"	kind:variable	line:32
+Replacement	../flask_main.py	/^import arrow # Replacement for datetime, based on moment.js$/;"	kind:namespace	line:11
+SCOPES	../flask_main.py	/^SCOPES = 'https:\/\/www.googleapis.com\/auth\/calendar.readonly'$/;"	kind:variable	line:37
+app	../flask_main.py	/^app = flask.Flask(__name__)$/;"	kind:variable	line:32
+argparse	../config.py	/^import argparse$/;"	kind:namespace	line:25
+arrow	../flask_main.py	/^import arrow # Replacement for datetime, based on moment.js$/;"	kind:namespace	line:11
+based	../flask_main.py	/^import arrow # Replacement for datetime, based on moment.js$/;"	kind:namespace	line:11
+cal_sort_key	../flask_main.py	/^def cal_sort_key( cal ):$/;"	kind:function	line:321
+choose	../flask_main.py	/^def choose():$/;"	kind:function	line:56
+client	../flask_main.py	/^from oauth2client import client$/;"	kind:namespace	line:17
+command_line_args	../config.py	/^def command_line_args():$/;"	kind:function	line:35
+config	../flask_main.py	/^import config$/;"	kind:namespace	line:26
+config.py	../config.py	1;"	kind:file	line:1
+config_file_args	../config.py	/^def config_file_args(config_file_paths, project=None):$/;"	kind:function	line:64
+configparser	../config.py	/^import configparser$/;"	kind:namespace	line:24
+configuration	../config.py	/^def configuration(proxied=False):$/;"	kind:function	line:106
+datetime	../flask_main.py	/^import arrow # Replacement for datetime, based on moment.js$/;"	kind:namespace	line:11
+discovery	../flask_main.py	/^from apiclient import discovery$/;"	kind:namespace	line:21
+fake_cli_args	../config.py	/^def fake_cli_args():$/;"	kind:function	line:51
+flask	../flask_main.py	/^import flask$/;"	kind:namespace	line:1
+flask_main.py	../flask_main.py	1;"	kind:file	line:1
+flow	../flask_main.py	/^import httplib2   # used in oauth2 flow$/;"	kind:namespace	line:18
+for	../flask_main.py	/^import arrow # Replacement for datetime, based on moment.js$/;"	kind:namespace	line:11
+format_arrow_date	../flask_main.py	/^def format_arrow_date( date ):$/;"	kind:function	line:345
+format_arrow_time	../flask_main.py	/^def format_arrow_time( time ):$/;"	kind:function	line:353
+get_gcal_service	../flask_main.py	/^def get_gcal_service(credentials):$/;"	kind:function	line:120
+httplib2	../flask_main.py	/^import httplib2   # used in oauth2 flow$/;"	kind:namespace	line:18
+imply_types	../config.py	/^def imply_types(ns: dict):$/;"	kind:function	line:90
+in	../flask_main.py	/^import httplib2   # used in oauth2 flow$/;"	kind:namespace	line:18
+index	../flask_main.py	/^def index():$/;"	kind:function	line:49
+init_session_values	../flask_main.py	/^def init_session_values():$/;"	kind:function	line:213
+interpret_date	../flask_main.py	/^def interpret_date( text ):$/;"	kind:function	line:261
+interpret_time	../flask_main.py	/^def interpret_time( text ):$/;"	kind:function	line:231
+interpreting	../flask_main.py	/^from dateutil import tz  # For interpreting local times$/;"	kind:namespace	line:13
+js	../flask_main.py	/^import arrow # Replacement for datetime, based on moment.js$/;"	kind:namespace	line:11
+json	../flask_main.py	/^import json$/;"	kind:namespace	line:7
+level	../config.py	/^                    level=logging.INFO)$/;"	kind:variable	line:29
+list_calendars	../flask_main.py	/^def list_calendars(service):$/;"	kind:function	line:287
+local	../flask_main.py	/^from dateutil import tz  # For interpreting local times$/;"	kind:namespace	line:13
+log	../config.py	/^log = logging.getLogger(__name__)$/;"	kind:variable	line:31
+logging	../config.py	/^import logging$/;"	kind:namespace	line:27
+logging	../flask_main.py	/^import logging$/;"	kind:namespace	line:8
+moment	../flask_main.py	/^import arrow # Replacement for datetime, based on moment.js$/;"	kind:namespace	line:11
+next_day	../flask_main.py	/^def next_day(isotext):$/;"	kind:function	line:274
+oauth2	../flask_main.py	/^import httplib2   # used in oauth2 flow$/;"	kind:namespace	line:18
+oauth2callback	../flask_main.py	/^def oauth2callback():$/;"	kind:function	line:137
+on	../flask_main.py	/^import arrow # Replacement for datetime, based on moment.js$/;"	kind:namespace	line:11
+os	../config.py	/^import os$/;"	kind:namespace	line:26
+render_template	../flask_main.py	/^from flask import render_template$/;"	kind:namespace	line:2
+request	../flask_main.py	/^from flask import request$/;"	kind:namespace	line:3
+setrange	../flask_main.py	/^def setrange():$/;"	kind:function	line:189
+times	../flask_main.py	/^from dateutil import tz  # For interpreting local times$/;"	kind:namespace	line:13
+tz	../flask_main.py	/^from dateutil import tz  # For interpreting local times$/;"	kind:namespace	line:13
+url_for	../flask_main.py	/^from flask import url_for$/;"	kind:namespace	line:4
+used	../flask_main.py	/^import httplib2   # used in oauth2 flow$/;"	kind:namespace	line:18
+uuid	../flask_main.py	/^import uuid$/;"	kind:namespace	line:5
+valid_credentials	../flask_main.py	/^def valid_credentials():$/;"	kind:function	line:101
