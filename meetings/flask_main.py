@@ -416,12 +416,14 @@ def format_freebusy_object(freebusy):
 
         for busy in tmpcal['busy']:
 
+            #arrow.get(start).format('MM-DD-YYYY HH:mm:ss'), 
+            # arrow.get(end).format('MM-DD-YYYY HH:mm:ss'),
             start = busy['start']
             end = busy['end']
             fmt = (
                 {
-                    'start' : arrow.get(start).format('MM-DD-YYYY'), 
-                    'end' : arrow.get(end).format('MM-DD-YYYY'),
+                    'start' : arrow.get(start).to('local').format('YYYY-MM-DD HH:mm:ss'),
+                    'end' : arrow.get(end).to('local').format('YYYY-MM-DD HH:mm:ss'),
                     'cal' : cal
                 })
 
