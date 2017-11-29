@@ -78,36 +78,14 @@
       <input type="submit" value="Choose" />
     </form>
 
-    <!--
-    Show the calendar list (if we have it).  This will need to be turned into
-    a form from which calendars can be picked. Up to three entries are
-    shown in each row (but the order is across then down; I would
-    prefer down then across). 
-    -->
-    <!-- {% if g.calendars is defined %}
-    <div class="row">
-      {% for cal in g.calendars if cal.selected %}
-      <div class="col-md-4">
-
-        <button type="button" class="btn btn-primary btn-large btn-block calButton">
-          {{ cal.summary }}
-        </button>
-        
-      </div>
-      {% if loop.index is divisibleby 3 %}
-    </div>
-    <div class="row">
-      {% endif %} {% endfor %}
-    </div>
-    {% endif %} -->
     {% if g.calendars is defined %}
     <div class="row">
 
       {% for cal in g.calendars if cal.selected %}
-      <div class="col-md-4">
+      <div class="col-6">
 
         <!-- select which calendars will be shown -->
-        &nbsp;
+        &nbsp
         <button type="button" id={{ cal.id }} class="btn btn-primary btn-large btn-block calButton" checked>
             {{ cal.summary }}
         </button>
@@ -117,8 +95,17 @@
     </div>
     {% endif %}
 
+    
+    <!-- <div id = "busy_list" class = "row panel-group"> -->
+    &nbsp
+    <div class="panel-default">
+      <h2> Times you are busy:</h2>
+      <div id = "busy_list" class = "row panel-group"/>
+    </div>
+    
 
   </div>
+
   <!-- container (for bootstrap) -->
 </body>
 
@@ -130,10 +117,8 @@
     // update all calendar buttons
     updateCalendars();
 
-
-    getFreeBusy();
-
-    // listen for calendar button presses
+    // listen for calendar button presses- on button press,
+    // synchronize with flask session state
     $('.calButton').click(function()
     {
       toggleCalendar(this.id);
@@ -150,7 +135,7 @@
     callAJAX('GET', '/api/_freebusy', null,
       function(res){
         var calRes = JSON.parse(res['responseText']);
-        console.log(calRes);
+        renderBlockingEvents(calRes);
       });
   };
 
@@ -195,11 +180,42 @@
   }
 
   //////
+  // Renders all events that the user is 'busy' during
+  /////
+  var renderBlockingEvents = function(events)
+  {
+    console.log(events);
+    console.log("trying to render");
+
+    const eventTemplate = (cal, start, end) => 
+    `
+      <div class="form-control form-rounded col-4">
+        <div class="panel-heading">${start} - ${end}</div>
+      </div>
+    `
+
+    var renderedEventList = [];
+    for(i in events){
+        var event = events[events.length - i - 1];
+        renderedEventList.push(
+          eventTemplate(event['cal'], event['start'], event['end'])
+        );
+    }
+
+    $('#busy_list').html(
+      renderedEventList.join('')
+    );
+  }
+
+  //////
   // updates all button's renders to the server's button state
+  //
+  // on a button render, freebusy will be queried.
   //////
   var renderToggledButtons = function(res)
   {
     calRes = JSON.parse(res['responseText']);
+
     ids = calRes['cals'];
 
     // clear all buttons
@@ -210,6 +226,8 @@
     for(i in ids){
       renderButton(ids[i], 'active');
     }
+
+    getFreeBusy();
   };
 
   //////

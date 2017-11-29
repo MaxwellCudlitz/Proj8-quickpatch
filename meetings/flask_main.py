@@ -369,35 +369,18 @@ def format_arrow_time(time):
 
 #############
 
-
-
 #############
 #
-# AJAX calls
+# Internal helper functionality
 #
-#############
+############
 
-
-# {
-#     "calendarExpansionMax": 42, # Maximal number of calendars for which FreeBusy information is to be provided. Optional.
-#     "groupExpansionMax": 42, # Maximal number of calendar identifiers to be provided for a single group. Optional. An error will be returned for a group with more members than this value.
-#     "timeMax": "A String", # The end of the interval for the query.
-#     "items": [ # List of calendars and/or groups to query.
-#       {
-#         "id": "A String", # The identifier of a calendar or a group.
-#       },
-#     ],
-#     "timeMin": "A String", # The start of the interval for the query.
-#     "timeZone": "UTC", # Time zone used in the response. Optional. The default is UTC.
-# }
-
-@app.route('/api/_freebusy', methods=['GET'])
-def api_free_busy():
+def query_freebusy_api(begindate, enddate, cals):
     """
-    Using selected calendars, returns a list of all the events
-    from those calendars
+    queries the freebusy api, returning a freebusy object for
+    the passed calendars within the range passed.
     """
-    form = request.form
+    app.logger.debug('querying freebusy API')
 
     credentials = valid_credentials()
     if not credentials:
@@ -406,36 +389,77 @@ def api_free_busy():
 
     gcal_service = get_gcal_service(credentials)
 
-    ids = []
-    for calid in flask.session['selected_calendars']:
-        ids.append({"id" : calid})
-
     req_body = {
-        'timeMax' : flask.session['end_date'],
-        'timeMin' : flask.session['begin_date'],
-        'items' : ids
+        'timeMax' : begindate,
+        'timeMin' : enddate,
+        'items' : cals
     };
 
     query_res = gcal_service.freebusy().query(body=req_body).execute()
-    calendars = query_res['calendars']
 
-    fmt_calendars = {}
+    app.logger.debug('freebusy API responded with {}'.format(query_res))
+
+    return query_res
+
+def format_freebusy_object(freebusy):
+    """
+    Formats the passed freebusy dict object into a friendlier list for the
+    client-side application
+    """
+
+    # format into nicer json object
+    calendars = freebusy['calendars']
+    fmt_cals = []
+
     for cal in calendars:
-        tdates = []
-        for appt in calendars[cal]['busy']:
-            start = appt['start']
-            end = appt['end']
-            fmt = ([
+        tmpcal = calendars[cal]
+
+        for busy in tmpcal['busy']:
+
+            start = busy['start']
+            end = busy['end']
+            fmt = (
                 {
                     'start' : arrow.get(start).format('MM-DD-YYYY'), 
-                    'end' : arrow.get(end).format('MM-DD-YYYY')
-                }])
-            tdates.append(fmt)
-        fmt_calendars[cal] = tdates
-        
+                    'end' : arrow.get(end).format('MM-DD-YYYY'),
+                    'cal' : cal
+                })
 
-    # print(fmt_calendars)
+            fmt_cals.append(fmt)
 
+    # return list sorted by key
+    return sorted(fmt_cals, key=lambda busy : arrow.get(busy['start']))
+
+
+#############
+#
+# AJAX calls
+#
+#############
+
+@app.route('/api/_freebusy', methods=['GET'])
+def api_free_busy():
+    """
+    Using selected calendars, returns a list of all the events
+    from those calendars
+    """
+    app.logger.debug("GET freebusy")
+
+    # if there are no selected calendars, return an empty list
+    if len(flask.session['selected_calendars']) == 0:
+        app.logger.debug('no calendars selected- returning empty jsonified list')
+        return flask.jsonify([])
+
+    # generate list of dict objects containing calendar
+    # ids for the freebusy API
+    ids = [{"id" : calid} for calid in flask.session['selected_calendars']]
+    
+    # query the freebusy API
+    query_res = query_freebusy_api(flask.session['end_date'], flask.session['begin_date'], ids)
+
+    # format retrieved object
+    fmt_calendars = format_freebusy_object(query_res)
+    
     return flask.jsonify(fmt_calendars)
 
 @app.route('/api/_selectedcals', methods=['GET'])
@@ -466,6 +490,7 @@ def api_sess_toggleCal():
 
     cals = flask.session['selected_calendars']
 
+    # toggle
     if not calid in cals:
          cals.append(calid)
     else:
@@ -474,12 +499,6 @@ def api_sess_toggleCal():
     flask.session['selected_calendars'] = cals
 
     return flask.jsonify({'cals' : flask.session['selected_calendars']})
-
-   
-
-
-
-
 
 
 ############

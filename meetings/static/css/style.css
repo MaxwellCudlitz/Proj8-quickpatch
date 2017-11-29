@@ -3,3 +3,14 @@
     white-space: normal !important;
     word-wrap: break-word;
 }
+
+.rounded-corners{
+    position:relative;
+    background:rgb(155, 155, 155);
+    width:400px;
+    height:120px;   
+    -webkit-border-radius: 2px;  
+    -moz-border-radius: 2px;  
+    border-radius: 3px;
+    margin:12px;
+}
