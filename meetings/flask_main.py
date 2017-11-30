@@ -7,6 +7,9 @@ import uuid
 import json
 import logging
 
+from modules.processing import free_times
+from modules.schemas import json_date_schema
+
 # Date handling
 import arrow  # Replacement for datetime, based on moment.js
 # import datetime # But we still need timepr
@@ -390,8 +393,8 @@ def query_freebusy_api(begindate, enddate, cals):
     gcal_service = get_gcal_service(credentials)
 
     req_body = {
-        'timeMax' : begindate,
-        'timeMin' : enddate,
+        'timeMax' : enddate,
+        'timeMin' : begindate,
         'items' : cals
     };
 
@@ -416,16 +419,9 @@ def format_freebusy_object(freebusy):
 
         for busy in tmpcal['busy']:
 
-            #arrow.get(start).format('MM-DD-YYYY HH:mm:ss'), 
-            # arrow.get(end).format('MM-DD-YYYY HH:mm:ss'),
             start = busy['start']
             end = busy['end']
-            fmt = (
-                {
-                    'start' : arrow.get(start).to('local').format('YYYY-MM-DD HH:mm:ss'),
-                    'end' : arrow.get(end).to('local').format('YYYY-MM-DD HH:mm:ss'),
-                    'cal' : cal
-                })
+            fmt = json_date_schema.format_date(start, end, cal, True)
 
             fmt_cals.append(fmt)
 
@@ -457,12 +453,18 @@ def api_free_busy():
     ids = [{"id" : calid} for calid in flask.session['selected_calendars']]
     
     # query the freebusy API
-    query_res = query_freebusy_api(flask.session['end_date'], flask.session['begin_date'], ids)
+    query_res = query_freebusy_api(flask.session['begin_date'], flask.session['end_date'], ids)
 
     # format retrieved object
-    fmt_calendars = format_freebusy_object(query_res)
+    busy_formatted = format_freebusy_object(query_res)
+
+    test = free_times.get_free(
+        arrow.get(flask.session['begin_date']),
+        arrow.get(flask.session['end_date']),
+        busy_formatted
+    )
     
-    return flask.jsonify(fmt_calendars)
+    return flask.jsonify(busy_formatted)
 
 @app.route('/api/_selectedcals', methods=['GET'])
 def get_selected_cals():
