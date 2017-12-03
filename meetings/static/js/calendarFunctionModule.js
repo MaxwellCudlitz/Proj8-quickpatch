@@ -82,7 +82,7 @@ var renderEvents = function(events)
     </div>
   `
 
-  // render events
+  // format events
   var renderedEventList = [];
   for(i in events){
       // reverse order iteration without flipping list
@@ -92,15 +92,15 @@ var renderEvents = function(events)
       var start = toLocalTime(event['start']);
       var end   = toLocalTime(event['end']);
 
-      renderedEventList.push(
-        eventTemplate(event['cal'], start, end, event['busy'])
-      );
+      // message
+      var msg = event['busy'] ? 'busy' : 'free';
 
-      // renderedEventList.push(
-      //   eventTemplate(event['cal'], event['start'], event['end'], event['busy'])
-      // );
+      renderedEventList.push(
+        eventTemplate(event['cal'], start, end, msg)
+      );
   }
 
+  // render events
   $('#busy_list').html(
     renderedEventList.join('')
   );
@@ -109,12 +109,16 @@ var renderEvents = function(events)
   colorizeEvents($('#busy_list'));
 }
 
+//////
+// converts a UTC string to local time, if it is able to be parsed
+//////
 var toLocalTime = function(isoStr)
 {
   // validate isostring
   if(moment(isoStr).isValid())
   {
-    //return moment(isoStr).local();
+    // this one has a prettier print.
+    // return moment(isoStr).local();
     return moment(isoStr).local().format('YYYY-DD-MM HH:mm:ss');
   }
     
