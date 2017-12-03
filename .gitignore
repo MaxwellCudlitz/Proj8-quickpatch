@@ -1,4 +1,6 @@
 # Local
+meetings/credentials.ini
+meetings/client_secret_977281576091-h24gejri81er99jec6jhmqaog4f5apmp.apps.googleusercontent.com
 secrets/*
 client_secret.json
 CONFIG.py

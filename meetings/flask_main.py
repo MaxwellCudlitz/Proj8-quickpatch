@@ -32,7 +32,7 @@ if __name__ == "__main__":
 else:
     CONFIG = config.configuration(proxied=True)
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, static_url_path='/static')
 app.debug = CONFIG.DEBUG
 app.logger.setLevel(logging.DEBUG)
 app.secret_key = CONFIG.SECRET_KEY
@@ -410,10 +410,11 @@ def format_freebusy_object(freebusy):
     client-side application
     """
 
-    # format into nicer json object
+    
     calendars = freebusy['calendars']
     fmt_cals = []
 
+    # format into nicer json object
     for cal in calendars:
         tmpcal = calendars[cal]
 
@@ -421,12 +422,13 @@ def format_freebusy_object(freebusy):
 
             start = busy['start']
             end = busy['end']
-            fmt = json_date_schema.format_date(start, end, cal, True)
+            fmt = json_date_schema.try_format_date(start, end, cal, True)
 
             fmt_cals.append(fmt)
 
+    return fmt_cals
     # return list sorted by key
-    return sorted(fmt_cals, key=lambda busy : arrow.get(busy['start']))
+    #return sorted(fmt_cals, key=lambda busy : arrow.get(busy['start']))
 
 
 #############
@@ -458,13 +460,20 @@ def api_free_busy():
     # format retrieved object
     busy_formatted = format_freebusy_object(query_res)
 
-    test = free_times.get_free(
+    # get free times from busy times + interval
+    free_formatted = free_times.get_free(
         arrow.get(flask.session['begin_date']),
         arrow.get(flask.session['end_date']),
         busy_formatted
     )
-    
-    return flask.jsonify(busy_formatted)
+
+    # combine lists and sort by start date
+    busyfree_formatted_sorted = sorted(
+        busy_formatted + free_formatted,
+        key=lambda busy : arrow.get(busy['start'])
+    )
+
+    return flask.jsonify(busyfree_formatted_sorted)
 
 @app.route('/api/_selectedcals', methods=['GET'])
 def get_selected_cals():

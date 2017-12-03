@@ -10,6 +10,12 @@ def get_free(begin, end, busy):
     returns a list of the blocks times between the begin and end dates,
     that do not fall within any of the 'busy' dates.
     """
+    
+    # sort the busy times
+    busy = sorted(
+        busy,
+        key=lambda b : arrow.get(b['start'])
+    )
 
     # aggregates free times
     free_times = []
@@ -20,26 +26,15 @@ def get_free(begin, end, busy):
     # add all in-between free times
     for event in busy:
         tmp_end_time = event['start']
+        print(tmp_start_time, tmp_end_time, free_times)
         free_times = _try_append_date(tmp_start_time, tmp_end_time, free_times)
         tmp_start_time = event['end']
-        # tmp_end_time = event['start']
-
-        # tmp_date = json_date_schema.try_format_date(
-        #     tmp_start_time, tmp_end_time,
-        #     "N/A", True
-        # )
-        # free_times.append(tmp_date)
-        # tmp_start_time = event['end']
-
 
     # add remaining time block between event and end
     free_times = _try_append_date(tmp_start_time, end, free_times)
-    # tmp_date = json_date_schema.tryformat_date(
-    #     tmp_start_time, end,
-    #     "N/A", True
-    # )
-    # if(tmp_date is not None):
-    #     free_times.append(tmp_date)
+
+    return free_times
+
 
 def _try_append_date(begin, end, append_list):
     """
@@ -48,8 +43,10 @@ def _try_append_date(begin, end, append_list):
     object, it will just return the source list.
     """
     tmp_date = json_date_schema.try_format_date(
-       begin, end, "N/A", True
+       begin, end, "N/A", False
     )
+
+    print(tmp_date)
 
     if(tmp_date is not None):
         append_list.append(tmp_date)

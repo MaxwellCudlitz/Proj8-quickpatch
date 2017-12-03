@@ -10,30 +10,30 @@ def try_format_date(start, end, calendar, busy):
     end times of the event being formatted, returning a 
     Nonetype instead of an exception if format invalid.
     """
-
-    if (arrow.get(end) > arrow.get(start) or not _assert_date_prams(start, end, calendar, busy)):
+    start = arrow.get(start)
+    end = arrow.get(end)
+    if not _assert_date_prams(start, end, calendar, busy):
         return None
     
-    return format_date(start, end, calendar, busy)
+    return _format_date(start, end, calendar, busy)
 
-
-    
-
-def format_date(start, end, calendar, busy):
+def _format_date(start, end, calendar, busy):
     """
     formats a start date, end date, calendar name, and business state into 
     an object using an object builder.
 
     Raises an exception if data prams are invalid.
     """
-    return ({
-        'start' : arrow.get(start).to('local').format('YYYY-MM-DD HH:mm:ss'),
-        'end' : arrow.get(end).to('local').format('YYYY-MM-DD HH:mm:ss'),
+    return {
+        # 'start' : arrow.get(start).format('YYYY-MM-DD HH:mm:ss'),
+        # 'end' : arrow.get(end).format('YYYY-MM-DD HH:mm:ss'),
+        'start' : arrow.get(start).isoformat(),
+        'end' : arrow.get(end).isoformat(),
         'cal' : calendar,
         'busy' : busy
-    })
+    }
     
 def _assert_date_prams(start, end, calendar, busy):
 
     """assertion for existence of all parameters"""
-    return start and end and calendar and busy != None and (end > start)
+    return start and end and calendar and busy != None and (end > start) and (end is not start)

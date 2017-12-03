@@ -14,3 +14,7 @@
     border-radius: 3px;
     margin:12px;
 }
+
+#overriding-container .form-control{
+    border : 20px solid
+}

@@ -12,8 +12,8 @@
 
   <!-- jquery from a content distribution network; probably cached -->
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
-  </script>
-
+  </script> 
+  
   <!-- Ideally the rest of our javascript dependencies would be
      bundled and minified with 'browserify', but I've found that
      it difficult to handle browserify dependencies for class
@@ -22,14 +22,19 @@
 -->
 
   <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-
   <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+
+  <!-- custom module scripts- requires meoment and jquery, so put after.-->
+  <script src="{{ url_for('static', filename='js/calendarFunctionModule.js') }}">
+  </script>   
+
   <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+
 
 
 </head>
 
-<body>
+<body id = "overriding-container">
   <div class="container">
 
     <h1>Busy times</h1>
@@ -113,149 +118,8 @@
 
   $(document).ready(function()
   {
-
-    // update all calendar buttons
-    updateCalendars();
-
-    // listen for calendar button presses- on button press,
-    // synchronize with flask session state
-    $('.calButton').click(function()
-    {
-      toggleCalendar(this.id);
-    });
+    initializeHandles();
   });
-
-  //////
-  // module exposing a function that updates the
-  // renders for which buttons are and are not toggled,
-  // loaded from the user's flask session
-  //////
-  var getFreeBusy = function()
-  {
-    callAJAX('GET', '/api/_freebusy', null,
-      function(res){
-        var calRes = JSON.parse(res['responseText']);
-        renderBlockingEvents(calRes);
-      });
-  };
-
-  //////
-  // module exposing a function that updates the
-  // renders for which buttons are and are not toggled,
-  // loaded from the user's flask session
-  //////
-  var updateCalendars = function()
-  {
-    callAJAX('GET', '/api/_selectedcals', null, renderToggledButtons);
-  };
-
-  //////
-  // module exposing calendar toggling functionality
-  //////
-  var toggleCalendar = function(id)
-  {
-    callAJAX('POST', '../api/session/_togglecal', 
-      JSON.stringify({'id' : id}), renderToggledButtons);
-  };
-
-  //////
-  // makes an ajax call with the passed prams
-  //////
-  var callAJAX = function(type, url, dat, resCallback)
-  {
-    $.ajax(
-    {
-      type : type,
-      url : url,
-      data : dat,
-      contentType: 'application/json; charset=utf-8'
-    })
-    .complete(function(res)
-    {
-      if(resCallback) 
-      {
-        resCallback(res);
-      }
-    });
-  }
-
-  //////
-  // Renders all events that the user is 'busy' during
-  /////
-  var renderBlockingEvents = function(events)
-  {
-    console.log(events);
-    console.log("trying to render");
-
-    const eventTemplate = (cal, start, end) => 
-    `
-      <div class="form-control form-rounded col-4">
-        <div class="panel-heading">${start} - ${end}</div>
-      </div>
-    `
-
-    var renderedEventList = [];
-    for(i in events){
-        var event = events[events.length - i - 1];
-        renderedEventList.push(
-          eventTemplate(event['cal'], event['start'], event['end'])
-        );
-    }
-
-    $('#busy_list').html(
-      renderedEventList.join('')
-    );
-  }
-
-  //////
-  // updates all button's renders to the server's button state
-  //
-  // on a button render, freebusy will be queried.
-  //////
-  var renderToggledButtons = function(res)
-  {
-    calRes = JSON.parse(res['responseText']);
-
-    ids = calRes['cals'];
-
-    // clear all buttons
-    clearButtonRender();
-
-    console.log(ids);
-    // render active ones
-    for(i in ids){
-      renderButton(ids[i], 'active');
-    }
-
-    getFreeBusy();
-  };
-
-  //////
-  // clear all actively toggled buttons
-  //////
-  var clearButtonRender = function()
-  {
-    $('.calButton').each(function(){
-      renderButton(this.id, 'inactive');
-    });
-  };
-
-  //////
-  // renders the current button as either
-  // active or inactive by changing it's
-  // state
-  //////
-  var renderButton = function(buttonId, state)
-  {
-    var elem = $(document.getElementById(buttonId));
-    if(state === 'active'){
-      elem.addClass('active');
-    }
-    else{
-      elem.removeClass('active');
-    }
-  };
-
 </script>
 
 </html>
