@@ -9,6 +9,7 @@ import logging
 
 from modules.processing import free_times
 from modules.schemas import json_date_schema
+from modules.database import db_interface
 
 # Date handling
 import arrow  # Replacement for datetime, based on moment.js
@@ -40,6 +41,15 @@ app.secret_key = CONFIG.SECRET_KEY
 SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
 CLIENT_SECRET_FILE = CONFIG.GOOGLE_KEY_FILE  # You'll need this
 APPLICATION_NAME = 'MeetMe class project'
+
+###
+# Initialization
+##
+
+print(CONFIG)
+if not(db_interface.init_db(CONFIG)):
+    print("Failure opening database. Is Mongo running? Correct password?")
+    sys.exit(1)
 
 #############################
 #
